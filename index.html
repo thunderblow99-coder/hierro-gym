@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101310">
+  <meta name="description" content="Registro privado de entrenamientos, rutinas y progresos. Sin cuentas ni funciones sociales.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>Hierro — Entrenamiento privado</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">H</div><div><div class="brand-name">HIERRO</div><div class="brand-sub">TU GIMNASIO. TUS DATOS.</div></div></div>
+      <button id="installBtn" class="icon-button hidden" aria-label="Instalar aplicación" title="Instalar aplicación">↓</button>
+    </header>
+
+    <main>
+      <section id="view-home" class="view active">
+        <div class="eyebrow">PANEL PERSONAL</div>
+        <div class="hero-row"><div><h1>Entrena con<br><span>intención.</span></h1><p class="muted">Cada repetición cuenta.</p></div><div class="hero-symbol">✳</div></div>
+        <button id="startEmptyBtn" class="primary-button wide"><span>＋</span> Empezar entrenamiento libre</button>
+        <div class="section-heading"><h2>Tus rutinas</h2><button class="text-button" data-goto="routines">Ver todas ↗</button></div>
+        <div id="homeRoutines" class="routine-list"></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-label">ENTRENAMIENTOS</span><strong id="statWorkouts">0</strong><span class="stat-foot">registrados</span></article>
+          <article class="stat-card"><span class="stat-label">ESTA SEMANA</span><strong id="statWeek">0</strong><span class="stat-foot">sesiones</span></article>
+          <article class="stat-card"><span class="stat-label">VOLUMEN TOTAL</span><strong id="statVolume">0</strong><span class="stat-foot">kg · reps</span></article>
+          <article class="stat-card"><span class="stat-label">RACHA ACTUAL</span><strong id="statStreak">0</strong><span class="stat-foot">semanas activas</span></article>
+        </div>
+        <div class="section-heading"><h2>Último entrenamiento</h2><button class="text-button" data-goto="history">Historial ↗</button></div>
+        <div id="lastWorkout" class="empty-state">Todavía no hay entrenamientos. El primero empieza aquí.</div>
+      </section>
+
+      <section id="view-routines" class="view">
+        <div class="eyebrow">PLANIFICACIÓN</div><div class="page-title-row"><h1>Rutinas</h1><button id="newRoutineBtn" class="primary-button compact">＋ Crear</button></div>
+        <p class="muted">Organiza tus sesiones y repite lo que funciona.</p>
+        <div id="routineList" class="routine-list"></div>
+      </section>
+
+      <section id="view-workout" class="view">
+        <div class="eyebrow">SESIÓN EN CURSO</div>
+        <div class="page-title-row"><div><h1 id="workoutTitle">Entrenamiento</h1><div id="workoutClock" class="muted small">00:00</div></div><button id="cancelWorkoutBtn" class="text-button danger">Cancelar</button></div>
+        <div class="workout-toolbar"><span id="workoutProgress" class="pill">0 series completadas</span><button id="addExerciseBtn" class="outline-button">＋ Ejercicio</button></div>
+        <div id="activeExercises"></div>
+        <button id="finishWorkoutBtn" class="primary-button wide finish-button">Terminar entrenamiento ✓</button>
+        <div class="rest-dock" id="restDock"><div><span class="rest-label">DESCANSO</span><strong id="restTime">01:30</strong></div><div class="rest-controls"><button id="restMinus" class="round-button">−15</button><button id="restToggle" class="round-button">▶</button><button id="restPlus" class="round-button">+15</button><button id="restStop" class="round-button">×</button></div></div>
+      </section>
+
+      <section id="view-history" class="view">
+        <div class="eyebrow">CONSISTENCIA</div><h1>Historial</h1><p class="muted">Tu trabajo, sesión a sesión.</p>
+        <div class="filter-row"><button class="filter-chip selected" data-history-filter="all">Todo</button><button class="filter-chip" data-history-filter="month">30 días</button><button class="filter-chip" data-history-filter="year">Este año</button></div>
+        <div id="historyList"></div>
+      </section>
+
+      <section id="view-progress" class="view">
+        <div class="eyebrow">DATOS, NO SUPOSICIONES</div><h1>Progreso</h1><p class="muted">Sigue la evolución de tus marcas y tu peso.</p>
+        <div class="panel"><div class="panel-head"><div><h2>Mejores marcas</h2><p class="muted small">Peso máximo registrado por ejercicio</p></div></div><div id="prList"></div></div>
+        <div class="panel"><div class="panel-head"><div><h2>Peso corporal</h2><p class="muted small">Registra tu evolución sin obsesionarte con un solo día.</p></div></div>
+          <form id="bodyWeightForm" class="inline-form"><label class="sr-only" for="bodyWeightInput">Peso corporal en kg</label><input id="bodyWeightInput" type="number" min="20" max="400" step="0.1" placeholder="Peso en kg" required><button class="primary-button compact" type="submit">Guardar</button></form>
+          <div id="bodyWeightChart" class="chart-area"></div><div id="bodyWeightList" class="weight-list"></div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="eyebrow">BAJO TU CONTROL</div><h1>Privacidad</h1><p class="muted">Esta aplicación no tiene perfiles, seguidores, anuncios, analítica ni conexión con un servidor de datos.</p>
+        <div class="privacy-card"><div class="privacy-icon">⌁</div><div><h2>Solo en este dispositivo</h2><p>Rutinas, sesiones, marcas y peso se guardan en el almacenamiento local de tu navegador. No se envían a ninguna cuenta.</p></div></div>
+        <div class="panel"><h2>Exportar copia de seguridad</h2><p class="muted small">Guarda un archivo con tus datos para poder recuperarlos si cambias de móvil o borras los datos del navegador.</p><button id="exportBtn" class="outline-button wide">↓ Exportar mis datos (.json)</button></div>
+        <div class="panel"><h2>Importar copia de seguridad</h2><p class="muted small">Importa un archivo exportado previamente. Sustituirá los datos actuales.</p><label class="outline-button wide file-label">↑ Elegir archivo JSON<input id="importInput" type="file" accept="application/json,.json" hidden></label></div>
+        <div class="panel danger-panel"><h2>Borrar todos los datos</h2><p class="muted small">Esta acción no se puede deshacer. Exporta primero si quieres conservar tu historial.</p><button id="clearDataBtn" class="outline-button danger wide">Borrar todos mis datos</button></div>
+        <div class="footnote">HIERRO · Versión 1.0 · Sin cuenta. Sin feed. Sin distracciones.</div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <button class="nav-item active" data-goto="home"><span class="nav-icon">⌂</span><span>Inicio</span></button>
+      <button class="nav-item" data-goto="routines"><span class="nav-icon">▤</span><span>Rutinas</span></button>
+      <button class="nav-item" data-goto="history"><span class="nav-icon">◷</span><span>Historial</span></button>
+      <button class="nav-item" data-goto="progress"><span class="nav-icon">↗</span><span>Progreso</span></button>
+      <button class="nav-item" data-goto="settings"><span class="nav-icon">⚙</span><span>Privacidad</span></button>
+    </nav>
+  </div>
+
+  <dialog id="routineDialog" class="modal">
+    <form id="routineForm" method="dialog">
+      <div class="modal-head"><div><div class="eyebrow">PLANIFICACIÓN</div><h2 id="routineDialogTitle">Nueva rutina</h2></div><button type="button" class="close-button" data-close="routineDialog">×</button></div>
+      <label>Nombre de la rutina<input id="routineName" required maxlength="60" placeholder="Ej. Tren superior A"></label>
+      <label>Descripción (opcional)<input id="routineDescription" maxlength="120" placeholder="Ej. Pecho, espalda y brazos"></label>
+      <div class="modal-subhead"><h3>Ejercicios</h3><button type="button" id="routineAddExercise" class="text-button">＋ Añadir</button></div>
+      <div id="routineExercisesEditor"></div>
+      <div class="modal-actions"><button type="button" class="outline-button" data-close="routineDialog">Cancelar</button><button class="primary-button" type="submit">Guardar rutina</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="exerciseDialog" class="modal">
+    <form id="exerciseForm" method="dialog">
+      <div class="modal-head"><div><div class="eyebrow">BIBLIOTECA</div><h2>Añadir ejercicio</h2></div><button type="button" class="close-button" data-close="exerciseDialog">×</button></div>
+      <input id="exerciseSearch" placeholder="Buscar ejercicio…" autocomplete="off">
+      <div id="exerciseChoices" class="exercise-choices"></div>
+      <div class="custom-exercise"><label>O crear uno propio<input id="customExerciseName" maxlength="70" placeholder="Nombre del ejercicio"></label><button id="createCustomExercise" type="button" class="outline-button wide">＋ Añadir ejercicio personalizado</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirmDialog" class="modal confirm-modal">
+    <div class="modal-head"><h2 id="confirmTitle">¿Seguro?</h2><button type="button" class="close-button" data-close="confirmDialog">×</button></div>
+    <p id="confirmMessage" class="muted"></p><div class="modal-actions"><button class="outline-button" data-close="confirmDialog">Volver</button><button id="confirmYes" class="primary-button">Confirmar</button></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+    }
+  </script>
+</body>
+</html>
